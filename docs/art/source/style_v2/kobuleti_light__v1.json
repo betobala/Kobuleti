@@ -1,0 +1,21 @@
+{
+  "id": "kobuleti_light",
+  "batch": "style_v2",
+  "variant": 1,
+  "kind": "illustration",
+  "prompt": "Use your built-in image generation tool to create exactly ONE image for a video game art pipeline. Do not run shell commands, do not write or edit files and do not ask questions. When the image exists, reply only with the word DONE.\n\nStyle: a flat, extremely minimalist product illustration of a modern Eurorack module front panel, calm and precise like a measuring instrument: matte cool light-grey aluminium panel #E1E3E4 with crisp near-black printed details, almost no decoration, generous empty space, no gradients across the panel, no ornaments, no textures, no shadows except a very soft contact shadow under knobs, jacks and buttons. Palette: cool light grey #E1E3E4, near-black #14181B, mid grey #7D8588, a dark charcoal plate #1D2326, exactly one accent colour teal #17B3A6 used only for tiny status LEDs and one small mark.\n\nSubject: the complete front panel of a Eurorack module, 10 HP (50.8 mm wide, 128.5 mm tall), seen perfectly straight on, portrait orientation, the panel filling the whole image with no rack, no wall and no hands around it. From top to bottom: a thin black horizontal rule with a tiny blank title mark above it; a row with one flat round push button on the left and four tiny teal LED dots in a row to its right; a thin rule; a row of four round black knobs with thin white pointer lines, evenly spaced; a row of four black round jacks with thin silver rings; a second row of four black round jacks; a row of four small soft glowing round LEDs; then a rounded-rectangle dark charcoal plate holding two rows of four black round jacks with thin silver rings; at the very bottom a row of three small black toggle switches. Everything aligned on a strict four-column grid. All labels are tiny blank short lines, no letters visible.\n\nThe artwork fills the entire frame, with no frame, border, wall, easel or hands around it.\n\nStrictly no text, letters, numbers, words, lettering, logos, brand marks, watermarks or signatures. No real people or celebrities, no real brands, no real-world landmarks.",
+  "inputs": [],
+  "codex_version": "codex-cli 0.160.1",
+  "model": "gpt-6-luna",
+  "effort": "low",
+  "thread_id": "01a1756a-0ab9-7c33-abd4-127692779fb7",
+  "created": "2026-10-25T20:34:54",
+  "seconds": 48,
+  "source_path": "C:\\Users\\beto-\\.codex\\generated_images\\01a1756a-0ab9-7c33-abd4-127692779fb7\\exec-ff16dbe2-1358-4416-9eb4-6dc13bbdb42c.png",
+  "sha256": "34ad30dc8aabcb063aad1eaa9ba9a1902afbc78b1554a89df46fb03f45f5a4a7",
+  "size": [
+    789,
+    1994
+  ],
+  "generator": "Codex CLI image_gen (codex exec)"
+}

@@ -1,0 +1,21 @@
+{
+ "batch": "style_v2",
+ "originals": "docs/art/source/style_v2",
+ "defaults": {
+  "variants": 1
+ },
+ "jobs": [
+  {
+   "id": "kobuleti_light",
+   "kind": "illustration",
+   "style": "Style: a flat, extremely minimalist product illustration of a modern Eurorack module front panel, calm and precise like a measuring instrument: matte cool light-grey aluminium panel #E1E3E4 with crisp near-black printed details, almost no decoration, generous empty space, no gradients across the panel, no ornaments, no textures, no shadows except a very soft contact shadow under knobs, jacks and buttons. Palette: cool light grey #E1E3E4, near-black #14181B, mid grey #7D8588, a dark charcoal plate #1D2326, exactly one accent colour teal #17B3A6 used only for tiny status LEDs and one small mark.",
+   "subject": "Subject: the complete front panel of a Eurorack module, 10 HP (50.8 mm wide, 128.5 mm tall), seen perfectly straight on, portrait orientation, the panel filling the whole image with no rack, no wall and no hands around it. From top to bottom: a thin black horizontal rule with a tiny blank title mark above it; a row with one flat round push button on the left and four tiny teal LED dots in a row to its right; a thin rule; a row of four round black knobs with thin white pointer lines, evenly spaced; a row of four black round jacks with thin silver rings; a second row of four black round jacks; a row of four small soft glowing round LEDs; then a rounded-rectangle dark charcoal plate holding two rows of four black round jacks with thin silver rings; at the very bottom a row of three small black toggle switches. Everything aligned on a strict four-column grid. All labels are tiny blank short lines, no letters visible."
+  },
+  {
+   "id": "kobuleti_dark",
+   "kind": "illustration",
+   "style": "Style: a flat, extremely minimalist product illustration of a modern Eurorack module front panel, calm and precise like a measuring instrument: matte near-black cool graphite aluminium panel #17191B with crisp off-white printed details, almost no decoration, generous empty space, no gradients across the panel, no ornaments, no textures. Palette: graphite #17191B, off-white #E6E8E8, mid grey #7D8588, a deeper plate #0E1113 with a thin grey outline, exactly one accent colour teal #17B3A6 used only for tiny status LEDs and one small mark.",
+   "subject": "Subject: the complete front panel of a Eurorack module, 10 HP (50.8 mm wide, 128.5 mm tall), seen perfectly straight on, portrait orientation, the panel filling the whole image with no rack, no wall and no hands around it. From top to bottom: a thin off-white horizontal rule with a tiny blank title mark above it; a row with one flat round off-white push button on the left and four tiny teal LED dots in a row to its right; a thin rule; a row of four round black knobs with thin white pointer lines, evenly spaced; a row of four black round jacks with thin silver rings; a second row of four black round jacks; a row of four small soft glowing round LEDs; then a rounded-rectangle deeper-black plate with a thin grey outline holding two rows of four black round jacks with thin silver rings; at the very bottom a row of three small black toggle switches. Everything aligned on a strict four-column grid. All labels are tiny blank short lines, no letters visible."
+  }
+ ]
+}

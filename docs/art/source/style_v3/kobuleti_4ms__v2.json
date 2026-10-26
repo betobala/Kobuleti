@@ -1,0 +1,21 @@
+{
+  "id": "kobuleti_4ms",
+  "batch": "style_v3",
+  "variant": 2,
+  "kind": "illustration",
+  "prompt": "Use your built-in image generation tool to create exactly ONE image for a video game art pipeline. Do not run shell commands, do not write or edit files and do not ask questions. When the image exists, reply only with the word DONE.\n\nStyle: a flat, high-contrast product illustration of a Eurorack module front panel, drawn in the visual language of the attached reference: warm white panel #EEECE8, bold uniform black outlines about 2 px, related controls grouped inside white rounded rectangles with black outlines, large matte black knobs with one thin white pointer line, small black pill-shaped sublabels, one black rounded box holding the output jacks which sit in white rings, thick black label bars, no gradients across the panel, no ornaments, only a soft contact shadow under knobs and jacks. Palette: warm white #EEECE8, black #111111, mid grey #8A8A86, exactly one accent colour ultramarine blue #2F4DFF used only for tiny LEDs and one lit mark.\n\nSubject: the complete front panel of a Eurorack module, 10 HP (50.8 mm wide, 128.5 mm tall), seen perfectly straight on, portrait orientation, the panel filling the whole image with no rack, no wall and no hands around it. From top to bottom: a small blank logo area with a braid of four phase-shifted sine waves drawn in black with one blue wave; a white rounded-rectangle group holding one flat round push button on the left and a row of four tiny blue LED dots; a row of four large matte black knobs with white pointer lines, evenly spaced, each with a small black pill sublabel under it; a white rounded group holding two rows of four black round jacks with silver rings; a row of four small soft glowing blue LEDs; a black rounded box holding two rows of four round jacks in white rings; at the bottom a white rounded group with three small black toggle switches; a thick black blank title bar at the very bottom. Everything on a strict four-column grid. All labels are blank short black bars and pills, no letters visible.\n\nThe artwork fills the entire frame, with no frame, border, wall, easel or hands around it.\n\nStrictly no text, letters, numbers, words, lettering, logos, brand marks, watermarks or signatures. No real people or celebrities, no real brands, no real-world landmarks.",
+  "inputs": [],
+  "codex_version": "codex-cli 0.160.1",
+  "model": "gpt-6-luna",
+  "effort": "low",
+  "thread_id": "01a17577-a499-7163-a45e-57a1a0c9b2f3",
+  "created": "2026-10-25T20:49:45",
+  "seconds": 49,
+  "source_path": "C:\\Users\\beto-\\.codex\\generated_images\\01a17577-a499-7163-a45e-57a1a0c9b2f3\\exec-459f065b-8009-4796-9bee-ad88584342af.png",
+  "sha256": "afbd6710cbcd30a9edeb60a88d448e8f70df3d59fc2a4093da6c37a6c7d525fd",
+  "size": [
+    789,
+    1994
+  ],
+  "generator": "Codex CLI image_gen (codex exec)"
+}

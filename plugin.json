@@ -1,0 +1,23 @@
+{
+  "slug": "Kobuleti",
+  "name": "Kobuleti",
+  "version": "2.0.0",
+  "license": "MIT",
+  "brand": "Kobuleti",
+  "author": "Beto",
+  "authorEmail": "",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "Kobuleti",
+      "name": "Kobuleti",
+      "description": "Quadruple LFO running a port of the open source Batumi firmware: free, quadrature, phase and divide modes",
+      "tags": ["LFO", "Clock Modulator", "Quad"]
+    }
+  ]
+}
