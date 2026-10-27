@@ -198,7 +198,7 @@ struct PanelArt : Widget {
 		}
 
 		std::shared_ptr<window::Font> stencil = pluginFont("BlackOpsOne-Regular.ttf");
-		std::shared_ptr<window::Font> bold = pluginFont("SpaceMono-Bold.ttf");
+		std::shared_ptr<window::Font> bold = pluginFont("BebasNeue-Regular.ttf");
 		if (!stencil || !bold)
 			return;
 		bb::nameplate(vg, 25.4f, 8.6f, "KOBULETI", stencil->handle, k, 4.0f);
@@ -206,19 +206,20 @@ struct PanelArt : Widget {
 		nvgTextLetterSpacing(vg, mm2px(0.08f));
 
 		// mode labels under the four LEDs
-		nvgFontSize(vg, mm2px(2.4f));
+		nvgFontSize(vg, mm2px(3.6f));
 		static const char* const modes[4] = {"FREE", "QUAD", "PHASE", "DIV"};
 		for (int i = 0; i < 4; i++)
 			bb::label(vg, Vec(19.0f + i * 7.8f, 27.3f), modes[i], k.fg);
 
 		// channel numbers under the knobs
-		nvgFontSize(vg, mm2px(3.0f));
+		nvgFontSize(vg, mm2px(6.0f));
 		for (int i = 0; i < 4; i++)
 			bb::label(vg, Vec(X[i], 48.5f), string::f("%d", i + 1).c_str(), k.fg);
 
-		nvgFontSize(vg, mm2px(2.6f));
+		nvgFontSize(vg, mm2px(5.2f));
 		bb::label(vg, Vec(25.4f, 64.0f), "CV", k.fg);
 		bb::label(vg, Vec(25.4f, 75.6f), "RESET / SYNC", k.fg);
+		nvgFontSize(vg, mm2px(3.6f));
 		bb::label(vg, Vec(25.4f, 98.6f), "SINE", k.red);
 		bb::label(vg, Vec(25.4f, 110.2f), "ASSIGN", k.red);
 
@@ -230,9 +231,9 @@ struct PanelArt : Widget {
 			const char* bottom;
 		} sw[3] = {{7.2f, "SYNC", "SYNC", "RESET"}, {22.4f, "WAVE 1", "ON", "OFF"}, {37.6f, "WAVE 2", "ON", "OFF"}};
 		for (const auto& w : sw) {
-			nvgFontSize(vg, mm2px(2.4f));
+			nvgFontSize(vg, mm2px(4.8f));
 			bb::label(vg, Vec(w.x + 2.6f, 115.6f), w.title, k.fg);
-			nvgFontSize(vg, mm2px(2.1f));
+			nvgFontSize(vg, mm2px(4.2f));
 			nvgFillColor(vg, k.dim);
 			nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 			nvgText(vg, mm2px(w.x + 4.2f), mm2px(119.0f), w.top, NULL);
