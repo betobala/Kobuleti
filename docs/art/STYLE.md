@@ -70,10 +70,9 @@ Workout, com um traço de personalidade no lettering. Aqui o desenho é próprio
 - **Uso no painel:** 35 mm de largura (altura 15 mm), centralizado no topo.
   Tamanho mínimo: 26 mm de largura.
 
-## Controles (linguagem do 4ms)
+## Controles
 
-Os controles do painel seguem a linguagem de controles do 4ms (referência em `docs/art/source/refs/`, folha em
-`docs/art/components_4ms.png`). Estão em `src/Controls4ms.hpp`, desenhados em NanoVG para mudar com o tema.
+Os controles do painel (folha em `docs/art/components.png`) estão em `src/Controls.hpp`, desenhados em NanoVG para mudar com o tema.
 
 | Controle | Desenho |
 |---|---|

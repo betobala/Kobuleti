@@ -3,7 +3,7 @@
 // 16384 Hz rate; this file replaces the STM32 drivers with Rack's ports and params.
 #include <rack.hpp>
 #include <cstring>
-#include "Controls4ms.hpp"
+#include "Controls.hpp"
 #include "Stencil.hpp"
 #include "processor.h"
 
