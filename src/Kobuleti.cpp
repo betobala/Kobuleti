@@ -4,6 +4,7 @@
 #include <rack.hpp>
 #include <cstring>
 #include "Controls4ms.hpp"
+#include "Stencil.hpp"
 #include "processor.h"
 
 using namespace rack;
@@ -153,55 +154,17 @@ struct Kobuleti : Module {
 };
 
 // ---------------------------------------------------------------- themes
-// Palette "Bone" (light) and "Slate" (dark), one accent (ultramarine). See docs/art/STYLE.md.
-struct KTheme {
-	NVGcolor panel, ink, grey, frame, group, plate, plateInk, plateLine, accent, negative;
-};
+// betobullet stencil (docs/art/STYLE.md): theme 0 = black panel, 1 = white panel
+using bb::THEME_NAMES;
 static const int NUM_THEMES = 2;
-static const char* const THEME_NAMES[NUM_THEMES] = {"Bone", "Slate"};
-
-static KTheme kTheme(int t) {
-	KTheme k;
-	if (t == 1) {
-		k.panel = nvgRGB(0x17, 0x19, 0x1B);
-		k.ink = nvgRGB(0xE6, 0xE8, 0xE8);
-		k.grey = nvgRGB(0x7C, 0x7F, 0x85);
-		k.frame = nvgRGB(0x6B, 0x6F, 0x75);
-		k.group = nvgRGB(0x1E, 0x21, 0x24);
-		k.plate = nvgRGB(0x0E, 0x11, 0x13);
-		k.plateInk = nvgRGB(0xE6, 0xE8, 0xE8);
-		k.plateLine = nvgRGB(0x6B, 0x6F, 0x75);
-		k.accent = nvgRGB(0x5B, 0x74, 0xFF);
-	}
-	else {
-		k.panel = nvgRGB(0xE8, 0xE6, 0xE1);
-		k.ink = nvgRGB(0x0F, 0x12, 0x16);
-		k.grey = nvgRGB(0x7C, 0x7F, 0x85);
-		k.frame = nvgRGB(0x0F, 0x12, 0x16);
-		k.group = nvgRGB(0xF3, 0xF1, 0xEC);
-		k.plate = nvgRGB(0x1B, 0x1E, 0x24);
-		k.plateInk = nvgRGB(0xF6, 0xF4, 0xEF);
-		k.plateLine = nvgRGB(0x1B, 0x1E, 0x24);
-		k.accent = nvgRGB(0x2F, 0x4D, 0xFF);
-	}
-	k.negative = nvgRGB(0xF2, 0xC9, 0x4C);
-	return k;
-}
+// LED colours: positive half white, negative half grey (the panel stays black and white)
+static const NVGcolor LED_POSITIVE = nvgRGB(0xF4, 0xF4, 0xF2), LED_NEGATIVE = nvgRGB(0x8A, 0x8A, 0x88);
 
 namespace fms {
 const Colors& colors(const engine::Module* m) {
-	static const Colors bone = {
-		nvgRGB(0x11, 0x11, 0x11), nvgRGB(0x3A, 0x3A, 0x3A), nvgRGB(0xF6, 0xF4, 0xEF), nvgRGB(0x0F, 0x12, 0x16),
-		nvgRGB(0xD3, 0xD3, 0xD0), nvgRGB(0xF7, 0xF7, 0xF5), nvgRGB(0x8E, 0x8E, 0x8A), nvgRGB(0x5C, 0x5C, 0x5A), nvgRGB(0x05, 0x05, 0x05),
-		nvgRGB(0xF4, 0xF2, 0xEA), nvgRGB(0xFF, 0xFF, 0xFF), nvgRGB(0x2F, 0x4D, 0xFF), nvgRGB(0x7C, 0x90, 0xFF), nvgRGB(0x0F, 0x12, 0x16),
-		nvgRGB(0xFB, 0xFB, 0xF9)};
-	static const Colors slate = {
-		nvgRGB(0x0B, 0x0B, 0x0D), nvgRGB(0x3A, 0x3B, 0x3F), nvgRGB(0xF6, 0xF4, 0xEF), nvgRGB(0xE6, 0xE8, 0xE8),
-		nvgRGB(0xD3, 0xD3, 0xD0), nvgRGB(0xF7, 0xF7, 0xF5), nvgRGB(0x8E, 0x8E, 0x8A), nvgRGB(0x5C, 0x5C, 0x5A), nvgRGB(0x05, 0x05, 0x05),
-		nvgRGB(0xE6, 0xE8, 0xE8), nvgRGB(0xFF, 0xFF, 0xFF), nvgRGB(0x5B, 0x74, 0xFF), nvgRGB(0x9A, 0xAA, 0xFF), nvgRGB(0x6B, 0x6F, 0x75),
-		nvgRGB(0xFB, 0xFB, 0xF9)};
+	static const Colors black = bb::controlColors(0), white = bb::controlColors(1);
 	int t = m ? static_cast<const Kobuleti*>(m)->theme : 0;
-	return t == 1 ? slate : bone;
+	return t == 1 ? white : black;
 }
 }  // namespace fms
 
@@ -213,98 +176,62 @@ static std::shared_ptr<window::Font> pluginFont(const char* file) {
 }
 
 // ---------------------------------------------------------------- widgets
-/** The logotype, one SVG per theme (bone / slate). */
-struct LogoWidget : TransparentWidget {
-	Kobuleti* module = nullptr;
-	std::shared_ptr<window::Svg> svg[2];
-
-	void load(float widthMm) {
-		svg[0] = window::Svg::load(asset::plugin(pluginInstance, "res/logo_bone.svg"));
-		svg[1] = window::Svg::load(asset::plugin(pluginInstance, "res/logo_slate.svg"));
-		float w = svg[0]->handle->width, h = svg[0]->handle->height;
-		box.size = Vec(mm2px(widthMm), mm2px(widthMm) * h / w);
-	}
-
-	void draw(const DrawArgs& args) override {
-		int i = (module && module->theme == 1) ? 1 : 0;
-		if (!svg[i])
-			return;
-		float sc = box.size.x / svg[i]->handle->width;
-		nvgSave(args.vg);
-		nvgScale(args.vg, sc, sc);
-		window::svgDraw(args.vg, svg[i]->handle);
-		nvgRestore(args.vg);
-	}
-};
-
-/** Panel background, rounded groups and every label. Drawn in code so the theme can change. */
+/** Panel background, stencil frames and every label. Drawn in code so the theme can change. */
 struct PanelArt : Widget {
 	Kobuleti* module = nullptr;
 
-	void group(NVGcontext* vg, float x, float y, float w, float h, NVGcolor fill, NVGcolor line, float lineMm) {
-		nvgBeginPath(vg);
-		nvgRoundedRect(vg, mm2px(x), mm2px(y), mm2px(w), mm2px(h), mm2px(2.6f));
-		nvgFillColor(vg, fill);
-		nvgFill(vg);
-		if (lineMm > 0.f) {
-			nvgStrokeColor(vg, line);
-			nvgStrokeWidth(vg, mm2px(lineMm));
-			nvgStroke(vg);
-		}
-	}
-
 	void draw(const DrawArgs& args) override {
-		KTheme k = kTheme(module ? module->theme : 0);
+		bb::Ink k = bb::ink(module ? module->theme : 0);
+		bb::Ink inv = {k.fg, k.bg};
 		NVGcontext* vg = args.vg;
 		nvgBeginPath(vg);
 		nvgRect(vg, 0, 0, box.size.x, box.size.y);
-		nvgFillColor(vg, k.panel);
+		nvgFillColor(vg, k.bg);
 		nvgFill(vg);
 
-		// groups: select + modes, the two input rows, the outputs on a dark plate, the switches
-		group(vg, 2.4f, 18.2f, 46.0f, 12.4f, k.group, k.frame, 0.35f);
-		group(vg, 2.4f, 52.2f, 46.0f, 26.8f, k.group, k.frame, 0.35f);
-		group(vg, 2.4f, 87.0f, 46.0f, 26.4f, k.plate, k.plateLine, 0.3f);
-
-		std::shared_ptr<window::Font> reg = pluginFont("SpaceMono-Regular.ttf");
-		std::shared_ptr<window::Font> bold = pluginFont("SpaceMono-Bold.ttf");
-		if (!reg || !bold)
-			return;
-		nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+		// frames: select + modes, the two input rows; the outputs on a solid plate; the switches
+		bb::bullets(vg, 4.0f, 46.8f, 16.4f, 2.4f, 10, k);
+		bb::notchedFrame(vg, Rect(Vec(2.4f, 18.2f), Vec(46.0f, 12.4f)), k, 2.0f, 1.2f);
+		bb::frame(vg, Rect(Vec(2.4f, 52.2f), Vec(46.0f, 26.8f)), k);
 		const float X[4] = {8.2f, 19.6f, 31.0f, 42.4f};
+		for (int i = 0; i < 3; i++) {
+			bb::link(vg, X[i], X[i + 1], 58.2f, k, 3.6f);
+			bb::link(vg, X[i], X[i + 1], 70.4f, k, 3.6f);
+		}
+		bb::chamferPath(vg, Rect(Vec(2.4f, 87.0f), Vec(46.0f, 26.4f)), 2.0f);
+		nvgFillColor(vg, k.fg);
+		nvgFill(vg);
+		bb::hazard(vg, Rect(Vec(2.4f, 79.6f), Vec(46.0f, 1.4f)), k, 1.8f);
+
+		std::shared_ptr<window::Font> stencil = pluginFont("BlackOpsOne-Regular.ttf");
+		std::shared_ptr<window::Font> bold = pluginFont("SpaceMono-Bold.ttf");
+		if (!stencil || !bold)
+			return;
+		bb::title(vg, Rect(Vec(11.4f, 1.6f), Vec(36.4f, 6.4f)), "KOBULETI", stencil->handle, k, 4.0f);
+		nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 
 		// mode labels under the four LEDs
-		nvgFontFaceId(vg, reg->handle);
-		nvgFontSize(vg, mm2px(2.7f));
-		nvgFillColor(vg, k.ink);
+		nvgFontFaceId(vg, bold->handle);
+		nvgFontSize(vg, mm2px(2.4f));
+		nvgFillColor(vg, k.fg);
 		static const char* const modes[4] = {"FREE", "QUAD", "PHASE", "DIV"};
 		for (int i = 0; i < 4; i++)
 			nvgText(vg, mm2px(19.0f + i * 7.8f), mm2px(27.3f), modes[i], NULL);
 
-		// channel numbers in black pills, under the knobs
-		nvgFontFaceId(vg, bold->handle);
-		nvgFontSize(vg, mm2px(3.4f));
-		for (int i = 0; i < 4; i++) {
-			nvgBeginPath(vg);
-			nvgRoundedRect(vg, mm2px(X[i] - 3.3f), mm2px(48.5f - 2.1f), mm2px(6.6f), mm2px(4.2f), mm2px(2.1f));
-			nvgFillColor(vg, k.plate);
-			nvgFill(vg);
-			nvgFillColor(vg, k.plateInk);
-			nvgText(vg, mm2px(X[i]), mm2px(48.5f), string::f("%d", i + 1).c_str(), NULL);
-		}
+		nvgFontFaceId(vg, stencil->handle);
+		nvgTextLetterSpacing(vg, mm2px(0.1f));
+		// channel numbers on solid plates, under the knobs
+		nvgFontSize(vg, mm2px(3.2f));
+		for (int i = 0; i < 4; i++)
+			bb::plate(vg, Vec(X[i], 48.5f), string::f("%d", i + 1).c_str(), k, 6.4f, 4.0f);
 
-		nvgFontFaceId(vg, reg->handle);
-		nvgFontSize(vg, mm2px(3.3f));
-		nvgFillColor(vg, k.ink);
-		nvgText(vg, mm2px(25.4f), mm2px(64.0f), "CV", NULL);
-		nvgText(vg, mm2px(25.4f), mm2px(75.6f), "RESET / SYNC", NULL);
-		nvgFillColor(vg, k.plateInk);
-		nvgText(vg, mm2px(25.4f), mm2px(97.8f), "SINE", NULL);
-		nvgText(vg, mm2px(25.4f), mm2px(109.4f), "ASSIGN", NULL);
+		nvgFontSize(vg, mm2px(2.8f));
+		bb::plate(vg, Vec(25.4f, 64.0f), "CV", k, 9.0f);
+		bb::plate(vg, Vec(25.4f, 75.6f), "RESET / SYNC", k, 9.0f);
+		bb::plate(vg, Vec(25.4f, 97.8f), "SINE", inv, 9.0f);
+		bb::plate(vg, Vec(25.4f, 109.4f), "ASSIGN", inv, 9.0f);
 
 		// switches: title above, the two states on the right
-		nvgFillColor(vg, k.ink);
-		nvgFontSize(vg, mm2px(2.9f));
 		static const struct {
 			float x;
 			const char* title;
@@ -312,16 +239,18 @@ struct PanelArt : Widget {
 			const char* bottom;
 		} sw[3] = {{7.2f, "SYNC", "SYNC", "RESET"}, {22.4f, "WAVE 1", "ON", "OFF"}, {37.6f, "WAVE 2", "ON", "OFF"}};
 		for (const auto& w : sw) {
-			nvgText(vg, mm2px(w.x + 2.6f), mm2px(115.6f), w.title, NULL);
-			nvgFillColor(vg, k.grey);
-			nvgFontSize(vg, mm2px(2.6f));
+			nvgFontFaceId(vg, stencil->handle);
+			nvgFontSize(vg, mm2px(2.4f));
+			bb::plate(vg, Vec(w.x + 2.6f, 115.6f), w.title, k, 10.0f, 2.8f);
+			nvgFontFaceId(vg, bold->handle);
+			nvgFontSize(vg, mm2px(2.3f));
+			nvgFillColor(vg, k.fg);
 			nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
 			nvgText(vg, mm2px(w.x + 4.2f), mm2px(119.0f), w.top, NULL);
 			nvgText(vg, mm2px(w.x + 4.2f), mm2px(122.2f), w.bottom, NULL);
 			nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-			nvgFillColor(vg, k.ink);
-			nvgFontSize(vg, mm2px(2.9f));
 		}
+		nvgTextLetterSpacing(vg, 0.f);
 	}
 };
 
@@ -338,20 +267,13 @@ struct KobuletiWidget : ModuleWidget {
 		addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		LogoWidget* logo = new LogoWidget;
-		logo->module = module;
-		logo->load(27.0f);
-		logo->box.pos = Vec((box.size.x - logo->box.size.x) / 2, mm2px(4.0f));
-		addChild(logo);
-
 		const float X[4] = {8.2f, 19.6f, 31.0f, 42.4f};
-		KTheme k = kTheme(0);
 
 		// select button and the four mode LEDs
 		addParam(createParamCentered<fms::Button>(mm2px(Vec(X[0], 24.4f)), module, Kobuleti::SELECT_PARAM));
 		for (int i = 0; i < 4; i++) {
 			auto* led = createLightCentered<SmallLight<GrayModuleLightWidget>>(mm2px(Vec(19.0f + i * 7.8f, 22.6f)), module, Kobuleti::MODE_LIGHT + i);
-			led->addBaseColor(k.accent);
+			led->addBaseColor(LED_POSITIVE);
 			addChild(led);
 		}
 
@@ -359,10 +281,10 @@ struct KobuletiWidget : ModuleWidget {
 			addParam(fms::knob(mm2px(Vec(X[i], 40.2f)), module, Kobuleti::FREQ_PARAM + i, 3.9f));
 			addInput(createInputCentered<fms::Jack>(mm2px(Vec(X[i], 58.2f)), module, Kobuleti::CV_INPUT + i));
 			addInput(createInputCentered<fms::Jack>(mm2px(Vec(X[i], 70.4f)), module, Kobuleti::RESET_INPUT + i));
-			// positive half in the accent colour, negative half in amber
+			// positive half white, negative half grey
 			auto* led = createLightCentered<MediumLight<GrayModuleLightWidget>>(mm2px(Vec(X[i], 83.6f)), module, Kobuleti::CHANNEL_LIGHT + 2 * i);
-			led->addBaseColor(k.accent);
-			led->addBaseColor(k.negative);
+			led->addBaseColor(LED_POSITIVE);
+			led->addBaseColor(LED_NEGATIVE);
 			addChild(led);
 			addOutput(createOutputCentered<fms::Jack>(mm2px(Vec(X[i], 92.8f)), module, Kobuleti::SINE_OUTPUT + i));
 			addOutput(createOutputCentered<fms::Jack>(mm2px(Vec(X[i], 104.4f)), module, Kobuleti::ASGN_OUTPUT + i));
