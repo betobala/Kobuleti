@@ -201,7 +201,7 @@ struct PanelArt : Widget {
 		std::shared_ptr<window::Font> bold = pluginFont("BebasNeue-Regular.ttf");
 		if (!stencil || !bold)
 			return;
-		bb::nameplate(vg, 25.4f, 8.6f, "KOBULETI", stencil->handle, k, 4.0f);
+		bb::nameplate(vg, 25.4f, 7.4f, "KOBULETI", stencil->handle, k, 4.0f, bb::MARK_BRAID, 32.0f, 4.0f);
 		nvgFontFaceId(vg, bold->handle);
 		nvgTextLetterSpacing(vg, mm2px(0.08f));
 
